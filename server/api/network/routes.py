@@ -6,10 +6,39 @@ from api import mongo
 from api.network import net_bp
 from api.models import Network, ConnectionDetails
 from api.utils.objectId import PydanticObjectId
+from api.services.network_service import connect_to_network
 
 db = mongo.db
 users = db["users"]
 networks = db["networks"]
+
+@net_bp.route('/connect/<string:slug>', methods=["GET"])
+@jwt_required
+def connect(slug):
+    try:
+        res = networks.find_one({ "slug": slug })
+
+        if not res:
+            return jsonify({ "error": "Network not found" }), 404
+
+        network = Network(**res)
+
+        connection_details = network.connection_details
+
+        if not connection_details.ip_address:
+            return jsonify({ "error": "IP Address is required for connection" }), 400
+        
+        success = connect_to_network(
+            ip_address=connection_details.ip_address, 
+            token=connection_details.token, 
+            credentials=connection_details.credentials)
+
+        if success:
+            return jsonify({ "message": "Connected to network successfully! "}), 200
+        return jsonify({ "error": "Couldn't connect to the network" }), 500
+    except Exception as e:
+        print(f'Exception while connecting to network: {e}')
+        return jsonify({ "error": "Internal Server Error" }), 500
 
 @net_bp.route('/<string:slug>', methods=['GET'])
 @jwt_required

@@ -5,8 +5,8 @@
 ## Technology Stack
 - **Frontend**: React.js, D3.js
 - **Backend**: Flask, RabbitMQ, Ansible
-- **Database**: OpenSearch, PostgreSQL
-- **Machine Learning**: PyTorch, HuggingFace, Sklearn
+- **Database**: MongoDB
+- **Machine Learning**: PyTorch, HuggingFace, Scikit Learn
 - **Deployment**: Docker
 
 ## Project Snapshots
