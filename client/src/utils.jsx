@@ -21,11 +21,11 @@ const routes = [
         element: <SignUp />,
     },
     {
-        path: '/network',
+        path: '/networks',
         element: <Network />
     },
     {
-        path: '/dashboard/:id',
+        path: '/dashboard',
         element: <Dashboard />
     }, 
     {
@@ -35,8 +35,28 @@ const routes = [
 ];
 
 const navLinks = [
-
+    {
+        name: 'Home',
+        link: '/'
+    },
+    {
+        name: 'Networks',
+        link: '/networks'
+    },
+    {
+        name: 'Dashboard',
+        link: '/dashboard'
+    },
+    {
+        name: 'Profile',
+        link: '/profile'
+    },
+    {
+        name: 'Settings',
+        link: '/settings'
+    }
 ];
+
 
 const footerLinks = [
 

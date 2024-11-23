@@ -4,6 +4,14 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    'bg-primary',
+    'bg-secondary',
+    'bg-accent',
+    'border-primary',
+    'border-secondary',
+    'border-accent'
+  ],
   theme: {
     extend: {
       colors: {

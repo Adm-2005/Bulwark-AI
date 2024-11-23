@@ -1,0 +1,110 @@
+---
+- name: Auto-remediation for Threats with High and Critical Severity
+  hosts: all
+  become: true
+  vars:
+    blocked_ips: []
+    fail2ban_service: fail2ban
+    security_packages:
+      - fail2ban
+      - ufw
+    security_upgrade: true
+    log_sources:
+      ssh: /var/log/auth.log
+      api: /var/log/app_api.log
+      syslog: /var/log/syslog
+      transfer: /var/log/transfer.log
+    malicious_keywords:
+      ["failed password", "unauthorized", "error", "malicious"]
+  tasks:
+    - name: Ensure fail2ban is installed
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop: "{{ security_packages }}"
+
+    - name: Apply system security updates
+      apt:
+        upgrade: dist
+        update_cache: yes
+        cache_valid_time: 3600
+      when: security_upgrade
+
+    - name: Block IPs identified as malicious
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        source: "{{ item }}"
+        state: present
+        jump: DROP
+      with_items: "{{ blocked_ips }}"
+      when: blocked_ips | length > 0
+
+    - name: Restart fail2ban service to apply changes
+      service:
+        name: "{{ fail2ban_service }}"
+        state: restarted
+
+    - name: Enable UFW firewall (if not already enabled)
+      ufw:
+        state: enabled
+        enabled: yes
+        default: deny
+
+    - name: Ensure UFW allows SSH
+      ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Restart UFW to apply changes
+      service:
+        name: ufw
+        state: restarted
+
+    - name: Collect logs for monitoring from SSH, API, Syslog, and File Transfer
+      shell: |
+        grep -i '{{ item }}' {{ log_sources[item] }}
+      register: log_entries
+      loop: "{{ log_sources.keys() }}"
+      when: log_sources is defined
+
+    - name: Identify malicious IPs based on log entries
+      set_fact:
+        blocked_ips: "{{ blocked_ips + (log_entries.results | selectattr('stdout', 'search', 'failed password') | map(attribute='stdout') | list) }}"
+
+    - name: Block malicious IPs identified from logs
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        source: "{{ item }}"
+        state: present
+        jump: DROP
+      with_items: "{{ blocked_ips }}"
+      when: blocked_ips | length > 0
+
+    - name: Send log data for further analysis
+      uri:
+        url: "http://backend/logs"
+        method: POST
+        body: "{{ log_entries.results | map(attribute='stdout') | join('\n') }}"
+        headers:
+          Content-Type: application/json
+        return_content: yes
+      when: log_entries.results | length > 0
+
+    - name: Alert admin of remediation actions taken
+      mail:
+        to: "admin@yourdomain.com"
+        subject: "Auto-Remediation Actions Executed"
+        body: |
+          The following remediation actions were executed:
+          - Fail2ban installed and restarted.
+          - IPs blocked: {{ blocked_ips | join(', ') }}
+          - System security updates applied.
+          - UFW firewall enabled and SSH allowed.
+          - Logs have been sent for analysis.
+
+    - name: Notify threat severity handling complete
+      debug:
+        msg: "Auto-remediation for threat severity level '{{ severity }}' completed successfully."

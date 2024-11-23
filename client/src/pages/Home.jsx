@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 
 const Home = () => {
     return (
-        <>
+        <div className="bg-gradient-to-r from-[#142462] to-[#030A10] w-full flex flex-col min-h-screen">
             <Navbar />
 
             <Hero />
@@ -13,7 +13,7 @@ const Home = () => {
             <Features />
 
             <Footer />
-        </>
+        </div>
     )
 }
 
