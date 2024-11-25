@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import NetworkCard from "../components/NetworkCard";
 
-const NetworkList = () => {
+const NetworkList = ({ networks, addNetworkOpen, setAddNetworkOpen }) => {
     const colors = ['primary', 'secondary', 'accent']
-    const [networks, setNetworks] = useState([]);
+
+    const handleAddNetwork = () => {
+        setAddNetworkOpen(!addNetworkOpen);
+    }
 
     return (
         <section className="flex flex-col gap-4 w-full items-center p-7">
@@ -16,7 +19,12 @@ const NetworkList = () => {
                     return (<NetworkCard network={network} color={color} />)
                 })}
             </div>
-            <button className="bg-red-700 hover:bg-red-900 py-[8px] px-[18px] rounded-lg text-white font-poppins font-semibold">Add Network +</button>
+            <button 
+                onClick={handleAddNetwork} 
+                className="bg-red-700 hover:bg-red-900 py-[8px] px-[18px] rounded-lg text-white font-poppins font-semibold"
+            >
+                Add Network +
+            </button>
         </section>
     )
 }

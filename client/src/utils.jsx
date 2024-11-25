@@ -57,9 +57,18 @@ const navLinks = [
     }
 ];
 
+const mockLogs = [
+    { timestamp: "2024-11-24T12:00:00Z", severity: "Info" },
+    { timestamp: "2024-11-24T12:05:00Z", severity: "Error" },
+    { timestamp: "2024-11-24T12:10:00Z", severity: "Critical" },
+    { timestamp: "2024-11-24T12:15:00Z", severity: "Info" },
+    { timestamp: "2024-11-24T12:20:00Z", severity: "Warn" },
+    { timestamp: "2024-11-24T12:25:00Z", severity: "Error" },
+    { timestamp: "2024-11-24T12:30:00Z", severity: "Critical" },
+];
 
 const footerLinks = [
 
 ];
 
-export { routes, navLinks, footerLinks };
+export { routes, navLinks, footerLinks, mockLogs };
