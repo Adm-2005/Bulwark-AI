@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from bson import ObjectId
 from api import mongo
 from api.models import User
-from api.user import user_bp
+from api.users import user_bp
 from api.utils.objectId import PydanticObjectId
 
 db = mongo.db

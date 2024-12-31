@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-user_bp = Blueprint('user', __name__)
+net_bp = Blueprint('networks', __name__)
 
 from . import routes

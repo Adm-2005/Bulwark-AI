@@ -1,7 +1,7 @@
 import re
 import datetime
 from enum import Enum
-from typing import Optional,List
+from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field
 from fastapi.encoders import jsonable_encoder
 from api.utils.objectId import PydanticObjectId
@@ -21,7 +21,7 @@ class Threat(BaseModel):
     description: Optional[str] = Field(default="")
     resolved: bool = Field(default=False)
     detected_at: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now(tz=datetime.timezone.utc))
-    resolved_at: Optional[datetime.datetime] = None
+    resolved_at: Optional[datetime.datetime] = Field(None)
 
     def resolve(self):
         self.resolved = True
@@ -56,8 +56,8 @@ class Network(BaseModel):
     connected: bool = Field(default=False)
     logs: Optional[List[LogEntry]] = Field(default_factory=list)
     threats: Optional[List[PydanticObjectId]] = Field(default_factory=list)
-    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now(tz=datetime.timezone.utc))
-    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now(tz=datetime.timezone.utc))
+    created_at: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now(tz=datetime.timezone.utc))
+    updated_at: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now(tz=datetime.timezone.utc))
 
     def generate_slug(self, collection):
         cleaned_name = re.sub(r'[^a-zA-Z0-9\s-]', '', self.name)
