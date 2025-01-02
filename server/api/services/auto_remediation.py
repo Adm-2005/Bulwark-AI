@@ -25,22 +25,3 @@ def auto_remediate(severity):
             print("Auto-remediation playbook executed successfully.")
         except subprocess.CalledProcessError as e:
             print(f"Error executing playbook: {e}")
-
-# from flask import Blueprint, jsonify, request
-# from services.log_service import ingest_logs, send_alert, auto_remediate
-
-# logs_bp = Blueprint("logs", __name__)
-
-# @logs_bp.route("/ingest", methods=["POST"])
-# def ingest():
-#     logs = request.json.get("logs", [])
-#     if not logs:
-#         return jsonify({"error": "No logs provided"}), 400
-
-#     anomalies = ingest_logs(logs)  
-#     if anomalies:
-#         severity = classify_threat(anomalies)
-#         send_alert(anomalies, severity)  
-#         auto_remediate(severity)  
-#         return jsonify({"message": "Logs processed with anomalies detected", "severity": severity}), 200
-#     return jsonify({"message": "No anomalies detected"}), 200
